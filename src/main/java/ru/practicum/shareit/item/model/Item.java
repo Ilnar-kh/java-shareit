@@ -1,9 +1,7 @@
 package ru.practicum.shareit.item.model;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.*;
 import lombok.*;
-import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 @Getter
@@ -11,18 +9,26 @@ import ru.practicum.shareit.user.User;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
+@Table(name = "items")
 public class Item {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Имя не может быть пустым")
+    @Column(nullable = false, length = 255)
     private String name;
 
-    @NotBlank(message = "Описание не может быть пустым")
+    @Column(nullable = false, columnDefinition = "text")
     private String description;
 
-    @NotNull(message = "Статус доступности должен быть указан")
+    @Column(name = "is_available", nullable = false)
     private Boolean available;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
-    private ItemRequest request;
+
+    @Column(name = "request_id")
+    private Long requestId;
 }
