@@ -18,8 +18,7 @@ class BookItemRequestDtoJsonTest {
 
     @Test
     void deserializeFromIsoStringsReadsDates() throws Exception {
-        String content = """
-                {"itemId":5,"start":"2025-01-10T10:00:00","end":"2025-01-11T11:00:00"}""";
+        String content = "{\"itemId\":5,\"start\":\"2025-01-10T10:00:00\",\"end\":\"2025-01-11T11:00:00\"}";
 
         BookItemRequestDto dto = json.parseObject(content);
 
