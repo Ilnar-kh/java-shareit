@@ -16,7 +16,7 @@ class ItemDtoJsonTest {
 
     @Test
     void deserializeWithoutRequestIdSetsNull() throws Exception {
-        String content = """
+        String content = """ 
                 {"name":"Drill","description":"Cordless","available":true}
                 """;
 
