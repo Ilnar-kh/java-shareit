@@ -70,13 +70,36 @@ class ItemRequestControllerTest {
     }
 
     @Test
-    void getAllRequestsForwardsHeaderToClient() throws Exception {
-        when(itemRequestClient.getAll(eq(5L))).thenReturn(ResponseEntity.ok().build());
+    void getOwnRequestsCallsClient() throws Exception {
+        when(itemRequestClient.getOwn(3L)).thenReturn(ResponseEntity.ok().build());
+
+        mockMvc.perform(get("/requests")
+                        .header(USER_HEADER, "3"))
+                .andExpect(status().isOk());
+
+        verify(itemRequestClient).getOwn(3L);
+    }
+
+    @Test
+    void getAllRequestsCallsClient() throws Exception {
+        when(itemRequestClient.getAll(5L)).thenReturn(ResponseEntity.ok().build());
 
         mockMvc.perform(get("/requests/all")
                         .header(USER_HEADER, "5"))
                 .andExpect(status().isOk());
 
         verify(itemRequestClient).getAll(5L);
+    }
+
+
+    @Test
+    void getRequestByIdCallsClient() throws Exception {
+        when(itemRequestClient.getById(7L, 9L)).thenReturn(ResponseEntity.ok().build());
+
+        mockMvc.perform(get("/requests/9")
+                        .header(USER_HEADER, "7"))
+                .andExpect(status().isOk());
+
+        verify(itemRequestClient).getById(7L, 9L);
     }
 }

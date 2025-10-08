@@ -21,6 +21,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -93,5 +95,64 @@ class ItemControllerTest {
                 .andExpect(status().isOk());
 
         verify(itemClient).addComment(eq(2L), eq(3L), any(CommentDto.class));
+    }
+
+    @Test
+    void updateItemForwardsPayloadToClient() throws Exception {
+        ItemDto patchDto = ItemDto.builder()
+                .description("Updated description")
+                .build();
+
+        when(itemClient.update(eq(4L), eq(10L), any(ItemDto.class))).thenReturn(ResponseEntity.ok().build());
+
+        mockMvc.perform(patch("/items/10")
+                        .header(USER_HEADER, "4")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(patchDto)))
+                .andExpect(status().isOk());
+
+        verify(itemClient).update(eq(4L), eq(10L), any(ItemDto.class));
+    }
+
+    @Test
+    void getItemByIdValidatesPositiveIdentifiers() throws Exception {
+        when(itemClient.getById(6L, 8L)).thenReturn(ResponseEntity.ok().build());
+
+        mockMvc.perform(get("/items/8")
+                        .header(USER_HEADER, "6"))
+                .andExpect(status().isOk());
+
+        verify(itemClient).getById(6L, 8L);
+    }
+
+    @Test
+    void getOwnerItemsCallsClient() throws Exception {
+        when(itemClient.getOwnerItems(11L)).thenReturn(ResponseEntity.ok().build());
+
+        mockMvc.perform(get("/items")
+                        .header(USER_HEADER, "11"))
+                .andExpect(status().isOk());
+
+        verify(itemClient).getOwnerItems(11L);
+    }
+
+    @Test
+    void searchItemsDelegatesToClient() throws Exception {
+        when(itemClient.search("drill")).thenReturn(ResponseEntity.ok().build());
+
+        mockMvc.perform(get("/items/search")
+                        .param("text", "drill"))
+                .andExpect(status().isOk());
+
+        verify(itemClient).search("drill");
+    }
+
+    @Test
+    void getByIdWithInvalidUserHeaderReturnsBadRequest() throws Exception {
+        mockMvc.perform(get("/items/1")
+                        .header(USER_HEADER, "0"))
+                .andExpect(status().isBadRequest());
+
+        verify(itemClient, never()).getById(anyLong(), anyLong());
     }
 }
