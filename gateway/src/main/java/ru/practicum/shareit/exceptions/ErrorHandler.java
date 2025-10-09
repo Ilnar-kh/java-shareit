@@ -45,11 +45,4 @@ public class ErrorHandler {
         log.error("MethodArgumentTypeMismatchException: {}", exception.getMessage());
         return Map.of("error", "Некорректное значение параметра: " + exception.getName());
     }
-
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map<String, String> handleAll(Exception exception) {
-        log.error("Unexpected error", exception);
-        return Map.of("error", "Внутренняя ошибка сервера");
-    }
 }
