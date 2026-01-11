@@ -1,4 +1,4 @@
-**ShareIt - микросервисное приложение для аренды вещей**
+***ShareIt - микросервисное приложение для аренды вещей***
 Java, Spring Boot, Spring JPA, PostgreSQL, REST API, Docker, Mockito, JUnit, Lombok
 
 О проекте
